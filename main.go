@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"store/adapters"
 	"store/routes"
 
 	"github.com/gin-gonic/gin"
@@ -12,8 +14,8 @@ func main() {
 	loadEnvVars()
 
 	router := gin.Default()
-
-	routes.RouteV1(router)
+	dbEngine := adapters.InitDB(os.Getenv("DATABASE_DSN"))
+	routes.RouteV1(router, dbEngine)
 
 	router.Run()
 }

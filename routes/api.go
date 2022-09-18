@@ -2,12 +2,13 @@ package routes
 
 import (
 	"net/http"
+	"store/adapters"
 	v1 "store/delivery/http/v1"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RouteV1(router *gin.Engine) {
+func RouteV1(router *gin.Engine, db adapters.DB) {
 
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotAcceptable, map[string]any{
@@ -17,25 +18,26 @@ func RouteV1(router *gin.Engine) {
 
 	apiV1 := router.Group("/api/v1")
 
-	// stores := apiV1.Group("")
-	// {
-	// 	// stores.GET("/stores", )
-	// 	// stores.GET("/stores/{id}")
-	// 	// stores.GET("/store/me")
-	// 	// stores.POST("/store")
-	// 	// stores.PUT("/store/me")
-	// 	// stores.PUT("/store/{id}")
-	// 	// stores.DELETE("/store/{id}")
-	// }
+	stores := apiV1.Group("")
+	{
+		stores.GET("/stores", v1.AdminListStores(db))
+		stores.GET("/stores/{id}", v1.AdminShowStore(db))
+		stores.GET("/store/me", v1.GetClientStore(db))
+		stores.POST("/store", v1.RegisterStore(db))
+		stores.PUT("/store/me", v1.UpdateClientStore(db))
+		stores.PUT("/store/{id}", v1.UpdateStoreByAdmin(db))
+		stores.DELETE("/store/{id}", v1.BanStoreByAdmin(db))
+	}
 
 	// productCategories := apiV1.Group("")
 	// {
-	// 	// productCategories.GET("/product-categories")
-	// 	// productCategories.GET("/product-categories/{id}")
-	// 	// productCategories.POST("/product-categories")
-	// 	// productCategories.DELETE("/product-categories/{id}")
-	// 	// productCategories.PUT("/product-categories/{id}")
-
+	// 	// 	// productCategories.GET("/product-categories")
+	// 	// 	// productCategories.GET("/product-categories/{id}")
+	// 	productCategories.GET("/product-categories/public")
+	// 	productCategories.GET("/product-categories/{id}/public")
+	// 	// 	// productCategories.POST("/product-categories")
+	// 	// 	// productCategories.DELETE("/product-categories/{id}")
+	// 	// 	// productCategories.PUT("/product-categories/{id}")
 	// }
 
 	media := apiV1.Group("")
